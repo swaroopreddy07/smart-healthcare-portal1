@@ -1,11 +1,7 @@
-// =============================================
-// src/pages/MedicalReports.js
-// =============================================
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
-import { FileText, Upload, Download, Trash2, Eye, X, Filter } from 'lucide-react';
+import { FileText, Upload, Download, Trash2, X, Filter } from 'lucide-react';
 
 const MedicalReports = () => {
   const { user } = useAuth();
@@ -145,7 +141,10 @@ const MedicalReports = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-500"></div>
+          <div className="absolute top-0 left-0 h-16 w-16 rounded-full border-t-4 border-purple-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+        </div>
       </div>
     );
   }
@@ -154,8 +153,8 @@ const MedicalReports = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Medical Reports</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-white">Medical Reports</h1>
+          <p className="text-slate-400 mt-1">
             {user?.role === 'Patient' 
               ? 'Upload and manage your medical reports' 
               : 'View patient medical reports'}
@@ -164,7 +163,7 @@ const MedicalReports = () => {
         {user?.role === 'Patient' && (
           <button
             onClick={() => setShowUploadModal(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition-colors"
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl flex items-center hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg shadow-cyan-500/20"
           >
             <Upload className="h-5 w-5 mr-2" />
             Upload Report
@@ -174,16 +173,16 @@ const MedicalReports = () => {
 
       {/* Doctor Filter */}
       {user?.role === 'Doctor' && patients.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border p-4">
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700/50 p-4">
           <div className="flex items-center gap-4">
-            <Filter className="h-5 w-5 text-gray-500" />
+            <Filter className="h-5 w-5 text-slate-400" />
             <select
               value={selectedPatient}
               onChange={(e) => {
                 setSelectedPatient(e.target.value);
                 setLoading(true);
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-200"
             >
               <option value="">All Patients</option>
               {patients.map(patient => (
@@ -198,7 +197,7 @@ const MedicalReports = () => {
                   setSelectedPatient('');
                   setLoading(true);
                 }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-slate-400 hover:text-white transition-colors"
               >
                 Clear
               </button>
@@ -208,16 +207,16 @@ const MedicalReports = () => {
       )}
 
       {/* Reports List */}
-      <div className="bg-white rounded-xl shadow-sm border">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700/50">
         <div className="p-6">
           {reports.length === 0 ? (
             <div className="text-center py-12">
-              <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">No reports found</p>
+              <FileText className="h-16 w-16 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400 text-lg">No reports found</p>
               {user?.role === 'Patient' && (
                 <button
                   onClick={() => setShowUploadModal(true)}
-                  className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
+                  className="mt-4 text-cyan-400 hover:text-cyan-300 font-medium"
                 >
                   Upload your first report
                 </button>
@@ -228,49 +227,49 @@ const MedicalReports = () => {
               {reports.map((report) => (
                 <div
                   key={report.ReportId}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border border-slate-700/50 rounded-xl p-4 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all bg-slate-800/30"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <span className="text-2xl">{getFileIcon(report.FileType)}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 truncate">
+                        <p className="font-medium text-white truncate">
                           {report.FileName}
                         </p>
                         {report.PatientName && (
-                          <p className="text-sm text-gray-500">{report.PatientName}</p>
+                          <p className="text-sm text-slate-400">{report.PatientName}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-2 mb-4 bg-slate-700/30 p-3 rounded-lg">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="font-medium text-gray-900">{report.ReportType}</span>
+                      <span className="text-slate-400">Type:</span>
+                      <span className="font-medium text-white">{report.ReportType}</span>
                     </div>
                     {report.FileSize && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Size:</span>
-                        <span className="font-medium text-gray-900">
+                        <span className="text-slate-400">Size:</span>
+                        <span className="font-medium text-white">
                           {formatFileSize(report.FileSize)}
                         </span>
                       </div>
                     )}
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Uploaded:</span>
-                      <span className="font-medium text-gray-900">
+                      <span className="text-slate-400">Uploaded:</span>
+                      <span className="font-medium text-white">
                         {new Date(report.UploadedAt).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">By:</span>
-                      <span className="font-medium text-gray-900">{report.UploadedBy}</span>
+                      <span className="text-slate-400">By:</span>
+                      <span className="font-medium text-white">{report.UploadedBy}</span>
                     </div>
                   </div>
 
                   {report.Description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    <p className="text-sm text-slate-300 mb-4 line-clamp-2 bg-slate-700/20 p-2 rounded">
                       {report.Description}
                     </p>
                   )}
@@ -278,7 +277,7 @@ const MedicalReports = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleDownload(report.ReportId, report.FileName)}
-                      className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center justify-center"
+                      className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-3 py-2 rounded-xl text-sm hover:from-cyan-600 hover:to-blue-600 transition-all flex items-center justify-center shadow-lg shadow-cyan-500/20"
                     >
                       <Download className="h-4 w-4 mr-1" />
                       Download
@@ -286,7 +285,7 @@ const MedicalReports = () => {
                     {user?.role === 'Patient' && (
                       <button
                         onClick={() => handleDelete(report.ReportId)}
-                        className="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm hover:bg-red-100 transition-colors"
+                        className="bg-red-500/10 text-red-400 px-3 py-2 rounded-xl text-sm hover:bg-red-500/20 transition-all border border-red-500/30"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -301,24 +300,24 @@ const MedicalReports = () => {
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 max-w-md w-full border border-slate-700/50 shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Upload Medical Report</h3>
-              <button onClick={() => setShowUploadModal(false)}>
-                <X className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+              <h3 className="text-xl font-bold text-white">Upload Medical Report</h3>
+              <button onClick={() => setShowUploadModal(false)} className="text-slate-400 hover:text-white transition-colors">
+                <X className="h-6 w-6" />
               </button>
             </div>
 
             <form onSubmit={handleUpload} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Report Type *
                 </label>
                 <select
                   value={uploadForm.reportType}
                   onChange={(e) => setUploadForm({ ...uploadForm, reportType: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-200"
                 >
                   <option value="General">General</option>
                   <option value="Blood Test">Blood Test</option>
@@ -332,30 +331,30 @@ const MedicalReports = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Description
                 </label>
                 <textarea
                   value={uploadForm.description}
                   onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
                   rows="3"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-200 placeholder-slate-500"
                   placeholder="Optional description..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   File * (PDF, JPEG, PNG - Max 10MB)
                 </label>
                 <input
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/10 file:text-cyan-400 hover:file:bg-cyan-500/20"
                 />
                 {uploadForm.file && (
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-slate-400 mt-2">
                     Selected: {uploadForm.file.name} ({formatFileSize(uploadForm.file.size)})
                   </p>
                 )}
@@ -365,14 +364,14 @@ const MedicalReports = () => {
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="flex-1 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 border border-slate-700 px-4 py-3 rounded-xl hover:bg-slate-800/50 transition-colors text-slate-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={uploading || !uploadForm.file}
-                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-3 rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all disabled:opacity-50 shadow-lg shadow-cyan-500/20"
                 >
                   {uploading ? 'Uploading...' : 'Upload'}
                 </button>
